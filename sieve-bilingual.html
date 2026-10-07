@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIEVE — an idea filter for Agritech ventures</title>
+<meta name="description" content="A structured idea filter for Agritech ventures. Work through six filters, record what you observed, and get a printable summary with recommended next actions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --ink:#2D2C3D; --orange:#D87043; --paper:#FAFAF7; --cream:#EFE8DF; --tint:#F7F3EE;
+  --grey:#5F6472; --light:#8A8F9C; --rule:#D9D5CE; --card:#FFFFFF; --focus:#1F6FEB;
+  --sans:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --serif:'Lora',Georgia,'Times New Roman',serif;
+  --maxw:1180px;
+}
+:root:not([data-theme="light"]){ }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F2F0EC; --orange:#E8865A; --paper:#1B1A24; --cream:#2A2935; --tint:#262531;
+    --grey:#B7BAC4; --light:#8E92A0; --rule:#3C3B4A; --card:#232230; --focus:#7FB0FF;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#F2F0EC; --orange:#E8865A; --paper:#1B1A24; --cream:#2A2935; --tint:#262531;
+  --grey:#B7BAC4; --light:#8E92A0; --rule:#3C3B4A; --card:#232230; --focus:#7FB0FF;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 90px)}
+body{
+  margin:0; background:var(--paper); color:var(--grey);
+  font-family:var(--serif); font-size:17px; line-height:1.6;
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,h4,.ui{font-family:var(--sans); color:var(--ink)}
+h1{font-size:1.6rem; line-height:1.2; margin:0}
+h2{font-size:1.45rem; line-height:1.25; margin:0 0 .3em}
+h3{font-size:1.02rem; margin:1.6em 0 .35em; font-weight:600}
+p{margin:0 0 .9em}
+a{color:var(--orange)}
+img{max-width:100%}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+.skip{position:absolute; left:-9999px}
+.skip:focus{left:12px; top:12px; z-index:100; background:var(--ink); color:#fff; padding:10px 14px; border-radius:6px}
+:focus-visible{outline:3px solid var(--focus); outline-offset:2px; border-radius:3px}
+
+/* ---------- header ---------- */
+header.top{background:var(--ink); color:#fff; padding:14px 0 0; position:sticky; top:0; z-index:40;
+  padding-top:calc(env(safe-area-inset-top,0px) + 14px)}
+.brandrow{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap}
+.brand{font-family:var(--sans); font-weight:700; letter-spacing:.22em; font-size:1.25rem; color:#fff}
+.tagline{font-family:var(--sans); font-weight:600; font-size:.63rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--orange)}
+.topright{margin-left:auto; display:flex; gap:8px; align-items:center}
+.ghost{background:transparent; color:#D7D9E0; border:1px solid #4A4958; border-radius:999px;
+  font-family:var(--sans); font-size:.72rem; padding:5px 11px; cursor:pointer}
+.ghost:hover{background:#34333F; color:#fff}
+
+/* ---------- progress ---------- */
+nav.steps{margin-top:12px; overflow-x:auto; -webkit-overflow-scrolling:touch}
+nav.steps ol{display:flex; gap:2px; list-style:none; margin:0; padding:0 0 0 0; min-width:max-content}
+nav.steps button{
+  background:transparent; border:0; border-bottom:3px solid transparent; cursor:pointer;
+  color:#AEB2BE; font-family:var(--sans); font-size:.76rem; padding:8px 12px 9px;
+  display:flex; align-items:center; gap:7px; white-space:nowrap;
+}
+nav.steps button:hover{color:#fff}
+nav.steps button[aria-current="step"]{color:#fff; border-bottom-color:var(--orange)}
+nav.steps .dot{width:17px; height:17px; border-radius:50%; border:1.5px solid #595869;
+  display:inline-flex; align-items:center; justify-content:center; font-size:.6rem; flex:none}
+nav.steps button[aria-current="step"] .dot{border-color:var(--orange); background:var(--orange); color:#fff}
+nav.steps button.done .dot{background:#4C7D63; border-color:#4C7D63; color:#fff}
+.bar{height:3px; background:#3A3947}
+.bar>i{display:block; height:100%; background:var(--orange); width:0; transition:width .3s}
+@media (prefers-reduced-motion:reduce){.bar>i{transition:none}}
+
+/* ---------- panels ---------- */
+main{padding:26px 0 90px}
+.panel{display:none}
+.panel.on{display:block; animation:fade .22s ease-out}
+@keyframes fade{from{opacity:0; transform:translateY(4px)}to{opacity:1; transform:none}}
+@media (prefers-reduced-motion:reduce){.panel.on{animation:none}}
+
+.lede{font-size:1.02rem; max-width:62ch}
+.eyebrow{font-family:var(--sans); font-weight:700; font-size:.64rem; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--orange); margin:0 0 6px}
+.cols{display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:34px; align-items:start}
+@media (max-width:900px){.cols{grid-template-columns:1fr; gap:22px}}
+
+.principle{background:var(--tint); border-left:3px solid var(--orange); padding:14px 16px; border-radius:0 8px 8px 0; margin:0 0 20px}
+.principle p{font-style:italic; margin:0; font-size:.95rem}
+.passes{border:1px solid var(--rule); border-radius:8px; padding:14px 16px; background:var(--card)}
+.passes .eyebrow{color:var(--ink)}
+
+.field{margin:0 0 22px; max-width:66ch}
+.field label.q{display:block; font-family:var(--sans); font-weight:500; color:var(--ink); font-size:1rem; margin-bottom:3px}
+.hint{font-size:.88rem; color:var(--light); margin:0 0 7px}
+textarea{
+  width:100%; min-height:76px; resize:vertical; padding:10px 12px; border-radius:8px;
+  border:1px solid var(--rule); background:var(--card); color:var(--ink);
+  font-family:var(--serif); font-size:.97rem; line-height:1.5;
+}
+textarea:hover{border-color:var(--light)}
+input[type=text]{width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--rule);
+  background:var(--card); color:var(--ink); font-family:var(--serif); font-size:.97rem}
+
+/* explain-on-hover disclosure */
+.explain{margin:0 0 9px}
+.explain>button{
+  background:none; border:0; padding:0; cursor:help; color:var(--orange);
+  font-family:var(--sans); font-size:.76rem; font-weight:600; letter-spacing:.04em;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.explain>button .chev{transition:transform .18s}
+.explain[data-open="1"]>button .chev{transform:rotate(90deg)}
+.explain .body{
+  display:none; margin-top:6px; padding:11px 13px; background:var(--tint);
+  border-radius:8px; font-size:.9rem; color:var(--grey); max-width:62ch;
+}
+.explain[data-open="1"] .body{display:block}
+
+/* choices */
+.choices{display:flex; flex-direction:column; gap:7px; margin:4px 0 0}
+.choice{display:flex; gap:10px; align-items:flex-start; padding:9px 11px; border:1px solid var(--rule);
+  border-radius:8px; background:var(--card); cursor:pointer; font-size:.94rem}
+.choice:hover{border-color:var(--orange)}
+.choice input{margin:3px 0 0; flex:none; width:17px; height:17px; accent-color:var(--orange)}
+.choice .sub{display:block; font-size:.82rem; color:var(--light)}
+.choice.warn:hover{border-color:#B4504A}
+
+.scale{display:flex; flex-direction:column; gap:5px; margin:6px 0 10px; border:0; padding:0}
+.scale legend{font-family:var(--sans); font-weight:500; color:var(--ink); font-size:1rem; padding:0}
+.lvl{display:flex; gap:11px; align-items:flex-start; padding:7px 10px; border:1px solid var(--rule);
+  border-radius:8px; background:var(--card); cursor:pointer; font-size:.92rem}
+.lvl:hover{border-color:var(--orange)}
+.lvl input{margin:3px 0 0; accent-color:var(--orange); flex:none}
+.lvl b{font-family:var(--sans); color:var(--light); flex:none; width:12px}
+.lvl.strong b{color:var(--orange)}
+.lvl.strong span{color:var(--ink)}
+.twoup{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+@media (max-width:620px){.twoup{grid-template-columns:1fr}}
+
+/* nav buttons */
+.navrow{display:flex; gap:12px; align-items:center; margin:30px 0 0; flex-wrap:wrap}
+.btn{font-family:var(--sans); font-weight:600; font-size:.9rem; border-radius:999px; padding:11px 22px;
+  border:1px solid var(--ink); background:var(--ink); color:#fff; cursor:pointer}
+.btn:hover{background:#3C3B4C}
+.btn.primary{background:var(--orange); border-color:var(--orange)}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.sec{background:transparent; color:var(--ink)}
+.btn.sec:hover{background:var(--cream)}
+.btn.link{background:none; border:0; color:var(--orange); padding:11px 4px; text-decoration:underline}
+
+/* intro */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:14px; margin:22px 0}
+.card{background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:15px}
+.card h4{margin:0 0 5px; font-size:.95rem; display:flex; gap:8px; align-items:baseline}
+.card .L{color:var(--orange); font-weight:700}
+.card p{font-size:.88rem; margin:0; color:var(--grey)}
+
+/* summary */
+.sheet{background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:26px}
+.verdict{border-radius:10px; padding:16px 18px; margin:0 0 20px; border:1px solid var(--rule); background:var(--tint)}
+.verdict h3{margin:0 0 4px; font-size:1.3rem; color:var(--orange)}
+.verdict p{margin:0; font-size:.95rem}
+table.sum{width:100%; border-collapse:collapse; font-size:.9rem; margin:0 0 18px}
+table.sum th,table.sum td{text-align:left; padding:7px 8px; border-bottom:1px solid var(--rule); vertical-align:top}
+table.sum th{font-family:var(--sans); font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; color:var(--ink)}
+.pill{font-family:var(--sans); font-size:.68rem; font-weight:600; padding:2px 9px; border-radius:999px;
+  border:1px solid var(--rule); white-space:nowrap}
+.pill.ok{background:#E6F0E9; color:#2C5E42; border-color:#BFD9C9}
+.pill.no{background:#F7E9E4; color:#8C4234; border-color:#E7C8BD}
+.pill.na{background:var(--cream); color:var(--grey)}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .pill.ok{background:#22402F; color:#A8D9BE; border-color:#2F5942}
+  :root:not([data-theme="light"]) .pill.no{background:#452A24; color:#E9B7A7; border-color:#5C382F}
+}
+ol.actions{padding-left:0; list-style:none; counter-reset:a; margin:0}
+ol.actions li{counter-increment:a; position:relative; padding:0 0 11px 34px; font-size:.95rem}
+ol.actions li::before{content:counter(a); position:absolute; left:0; top:1px; width:22px; height:22px;
+  border-radius:50%; background:var(--orange); color:#fff; font-family:var(--sans); font-size:.75rem;
+  font-weight:700; display:flex; align-items:center; justify-content:center}
+.answers dt{font-family:var(--sans); font-weight:500; color:var(--ink); font-size:.85rem; margin-top:10px}
+.answers dd{margin:1px 0 0; font-size:.9rem; white-space:pre-wrap}
+.small{font-size:.82rem; color:var(--light)}
+.foot{margin-top:34px; padding-top:14px; border-top:1px solid var(--rule); font-size:.78rem; color:var(--light)}
+.saved{font-size:.78rem; color:var(--light); font-family:var(--sans)}
+.sumhead{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:10px; margin-bottom:14px}
+.sumhead h3{margin:0; font-size:1.25rem}
+.sumhead p{margin:2px 0 0}
+.gateline{margin-top:-4px}
+ul.small{margin:0 0 10px; padding-left:20px}
+
+
+/* print */
+@media print{
+  header.top,nav.steps,.bar,.navrow,.noprint{display:none !important}
+  body{background:#fff; color:#222; font-size:10.5pt}
+  .wrap{max-width:none; padding:0}
+  main{padding:0}
+  .panel{display:none !important}
+  #p-summary{display:block !important}
+  .sheet{border:0; padding:0}
+  .verdict{background:#f4f1ec; border:1px solid #ddd}
+  h1,h2,h3,h4{color:#000}
+  a{color:#000; text-decoration:none}
+  table.sum{font-size:9pt}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" id="skipLink">Skip to content</a>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brandrow">
+      <span class="brand">SIEVE</span>
+      <span class="tagline" id="tagline">An idea filter for Agritech ventures</span>
+      <span class="topright">
+        <button class="ghost" id="langBtn" type="button" lang="fr">Français</button>
+        <button class="ghost" id="themeBtn" type="button">Dark</button>
+        <button class="ghost" id="resetBtn" type="button">Clear</button>
+      </span>
+    </div>
+    <nav class="steps" id="stepNavWrap" aria-label="Progress"><ol id="stepNav"></ol></nav>
+  </div>
+  <div class="bar"><i id="barFill"></i></div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <p aria-live="polite" class="skip" id="live"></p>
+    <div id="panels"></div>
+  </div>
+</main>
+
+<script>
+/* SIEVE content, English and French. Keys are language-independent. */
+var C = {
+
+en: {
+dir:"ltr", label:"English", other:"Français", otherCode:"fr",
+brand:"An idea filter for Agritech ventures",
+theme:["Dark","Light"], clear:"Clear", progress:"Progress",
+back:"Back", next:"Next", startBtn:"Start", print:"Print or save as PDF",
+download:"Download a copy", savedNote:"Saved on this device",
+stepOf:"Step %1 of %2: %3", skip:"Skip to content",
+confirmClear:"Clear everything you have entered on this device?",
+whyQ:"Why this question", passesWhen:"This filter passes when", whyFilter:"Why we filter this",
+
+nav:["Start","Why you","Someone","Itch","Existing","Version Zero","Evidence","Where next","Summary"],
+
+introTitle:"An idea filter for Agritech ventures",
+introP1:"Agritech ventures are often selected and funded on the strength of a pitch. A good pitch shows that someone can present an idea well. It does not show that the problem is real, that people will pay to solve it, or that the team can deliver. SIEVE replaces the question <em>how convincing is this idea?</em> with <em>what has actually been observed?</em>",
+introP2:"Its purpose is not to reject ideas. It is to find out early, and at low cost, which ones deserve time, money and support, and to show the others how they might change.",
+cards:[
+ ["","Why you","Why you are well placed to solve this. Introspection, not a pitch."],
+ ["S","Someone","Who has the problem, who pays, and how many of them there are."],
+ ["I","Itch","How strongly the problem is felt, judged by what people already do."],
+ ["E","Existing","What is done today instead. There is always something."],
+ ["V","Version Zero","The cheapest test of the assumption most likely to be wrong."],
+ ["E","Evidence","What has been observed, recorded, and can be shown."]],
+howTitle:"How to use it",
+how:["Work through the filters in order. Each one is passed with something you recorded, not with an argument.",
+ "Leave a box blank rather than guess. The blanks are your work plan.",
+ "Answers are kept on this device only. Nothing is sent anywhere.",
+ "At the end you get a one page summary you can print or save, with recommended next actions.",
+ "Come back and do it again after each round of testing."],
+yourVenture:"Your venture", mVname:"Venture or idea", mVwho:"Founders",
+disclaimer:"This tool gives general guidance. It does not replace the judgement of people who know your market, and it is not professional advice.",
+
+steps:{
+ why:{title:"Why you", lede:"Why you are well placed to solve this. Introspection, not a pitch.",
+  principle:"Ideas are rarely unique. What decides most early ventures is the people behind them: whether they understand the problem better than others, can reach the people who have it, and will keep going through slow seasons and failed tests. Desire, conviction and hard work count. So do knowledge, access and skills.",
+  passes:"You can show, not only state, an advantage someone starting tomorrow would not have: knowledge, access, skill or commitment.",
+  note:"Conviction helps when it is about the problem. It becomes a risk when it fixes on one solution and stops the evidence being heard. You will be asked to return to this page once the evidence is in."},
+ someone:{title:"Someone", lede:"Who has the problem, who pays, and how many of them there are.",
+  principle:"An idea needs people who have the problem, can be reached, and will pay. Most early ventures describe their market too broadly to reach or too narrowly to sustain a business. The person who uses a product, the person who decides, and the person who pays are often different, and all three must agree.",
+  passes:"The group is specific enough to reach, large enough by number or by value to sustain a business, and the person who pays is identified."},
+ itch:{title:"Itch", lede:"How strongly the problem is felt, judged by what people already do about it.",
+  principle:"Polite interest is the most common false signal in early ventures. People agree an idea is good and then do nothing. What they already spend, in money, time or effort, shows how much a problem matters. A problem nobody is acting on rarely becomes one they will pay to solve.",
+  passes:"The person who pays is already spending money, time or effort on the problem.",
+  scaleHint:"Score what you saw them do, not what they told you. Levels 3 and above are worth testing. Below that it is a preference rather than something people are already acting on.",
+  scaleUser:"How strongly the user feels it", scalePayer:"How strongly the person who pays feels it"},
+ existing:{title:"Existing", lede:"What is done today instead. There is always something.",
+  principle:"The real competitor is whatever people do now, including living with the loss. It sets the standard to improve on, by enough to make changing worthwhile. The reason a problem has not been solved is usually structural, and it often decides whether an idea can work at all.",
+  passes:"The alternative is described from the user's side and priced, and you can say how you will be clearly better on something they value.",
+  blockersH:"Which of these apply here?",
+  blockersHint:"These conditions decide whether an idea can work, regardless of how good it is. Tick everything that applies."},
+ v0:{title:"Version Zero", lede:"The cheapest test of the assumption most likely to be wrong.",
+  principle:"Building is the most expensive way to learn. Much of what early ventures spend goes on building things whose demand was never tested. Version Zero is not a small product. It is a test, made from things you can already use and pay for, that answers one question quickly.",
+  passes:"It produced a result that could have stopped you, at a cost you could afford to lose.",
+  formsH:"Choose the cheapest form that answers your question",
+  note:"Anything that controls water, power or machinery starts by only reporting what it would have done. Control is earned once the recommendations are routinely accepted."},
+ evidence:{title:"Evidence", lede:"What has been observed, recorded, and can be shown.",
+  principle:"A grant, an award or a strong pitch is not evidence that anyone wants a product. Evidence is something recorded that a person with no stake in the idea would find persuasive. The gates are taken in order, because demand cannot be shown for a problem not yet shown to exist.",
+  passes:"Someone with no stake in the idea would be persuaded by what you can show them.",
+  gatesH:"Five gates, taken in order",
+  gatesHint:"Tick a gate only where you have something recorded that you could show to someone with no stake in the idea.",
+  warnH:"Does any of this apply to your evidence?",
+  warnHint:"Being honest here changes what you are advised to do next. It does not count against you.",
+  enoughH:"How much is enough?",
+  enough:"Enough to persuade someone with no stake in the idea. For a consumer product that means many people. For a few large buyers it means repeat orders from several of them. Judge by number and by value."}
+},
+
+fields:{
+ why1:["Why does this problem matter to you?","Where did you first meet it? Family, work, study, the farm.",
+  "Founders who stay with a problem usually met it before they had a solution for it. If the honest answer is that you met the technology first and went looking for a use, say so here. It is not disqualifying, but it tells you to spend more time with the people who have the problem before building anything."],
+ why2:["What do you know about it that others do not?","Time in the field or the trade. Knowledge that took years to gain.",
+  "This is the question that separates an idea anyone could have from one you are placed to pursue. Useful answers are specific: seasons worked, a trade learned, a process you have run yourself. A degree in a related subject is a start, not an answer."],
+ why3:["Who can you reach that others cannot?","Growers, buyers, cooperatives, suppliers, officials.",
+  "Access is often worth more than technical skill in early Agritech. If you can get a meeting with a packhouse manager or a cooperative committee this month, that is a real advantage. If you cannot reach anyone who has the problem, your first task is to fix that, not to build."],
+ why4:["What can the team build, and what is missing?","Name each gap, and who will fill it.",
+  "Gaps are expected and are not a reason to stop. They are what an incubator, a mentor or a partner is for. The risk is an unnamed gap. Agronomy, regulatory knowledge and route to market are the three most often missing in Agritech teams."],
+ why5:["What have you already put into this?","Time, money, seasons, attempts that failed.",
+  "Commitment shows in what has already been done rather than in what is promised. Work already done at your own expense is among the strongest signals a founder can offer, and it is one an incubator can verify."],
+ why6:["Will you still be working on this in two seasons?","Agritech moves at the pace of the crop. What would make you stop?",
+  "Most Agritech evidence takes a season to gather. A venture that needs results in three months will either abandon the work or fake the measurement. Being honest here helps everyone plan."],
+ s1:["Who exactly has this problem?","Describe them by what they do, not by their sector.",
+  "\u201cDate farmers\u201d is too broad to reach through any one channel. \u201cPackhouses that buy in bulk and sell on grade\u201d can be listed, visited and counted. If your description cannot be turned into a list of names, narrow it until it can."],
+ s2:["How large is this market?","By number and by value.",
+  "Size is not only headcount. A venture selling to eight manufacturers who reorder every month can be worth far more than one selling occasionally to a thousand smallholders. Estimate volume and turnover alongside the number of customers, and say which of the two carries the business."],
+ s3:["Who uses it, who decides, and who pays?","Name a person or a role for each.",
+  "On a family holding these are often three people: the worker who uses it, the senior family member who decides, and whoever controls the money. In a cooperative or a packhouse, quality staff frequently hold the real decision because they must document every input. A product that suits only one of the three does not get bought."],
+ s4:["Who loses if you succeed?","A broker, a supplier, a grader, a foreman.",
+  "Someone is usually being displaced, and they are often closer to your user than you are. Sometimes they are also your route to market, which makes them worth understanding early rather than discovering late."],
+ s5:["How will you reach them?","Name three people outside your own circle of friends, family and classmates.",
+  "If you cannot name three, you do not yet have access to this market, and that is the first problem to solve. Cooperatives, chambers of agriculture, input suppliers, market days and wholesale markets are the usual routes."],
+ i1:["How often is it felt?","Daily, weekly, once a season, once a year.",
+  "Frequency decides how quickly you can learn. A weekly problem lets you test within a month. An annual one, such as pollination or harvest, means naming a proxy measure in advance and holding to it, or waiting a year for a result."],
+ i2:["What did you see that shows it?","A workaround, money spent, a loss recorded, their own words written down.",
+  "This is the evidence behind your score. A photograph of a float switch wired to a contactor, a day rate paid to a man who drives out to open valves, a quantity of fruit downgraded last season. If the only support is that someone said the idea sounded useful, the score is 1."],
+ e1:["What do they do about it today?","A person, a notebook, a WhatsApp group, an imported device, or nothing.",
+  "The answer is never \u201cnothing\u201d. Where it appears to be nothing, the alternative is that the user accepts the loss, and that loss has a value you can estimate with them. Check the local classifieds and marketplaces before concluding that no product exists."],
+ e2:["What does that cost them, and how well does it work?","Ask the users rather than estimating. Measure it the way you will measure your own.",
+  "Collect the figure from three separate users, not one, and not from your own assumption. If you cannot measure how well the current method works, you cannot later claim to have beaten it. Two experienced graders agreeing on 86 of 100 dates is the kind of number that settles an argument."],
+ e3:["Why has nobody solved it already?","Subsidy, cheap labour, land tenure, import rules, cash flow, regulation.",
+  "There is nearly always a reason, and it is more often structural than technical. Writing it down tends to clarify what the venture is really up against. If you cannot find a reason, you may not yet understand the problem."],
+ e4:["Why would they switch to you?","What stops being used the day you succeed, and what does changing cost them?",
+  "If nothing stops being used, you are an addition to the user's costs rather than a replacement, and the case has to be much stronger. Switching costs include unlearning, explaining the change to someone else, and the risk of a bad season."],
+ v1:["Which assumption is most likely to be wrong?","If this one is wrong, the venture does not work.",
+  "Usually it is that anyone wants this, or that they will pay for it. Teams more often test whether the technology works, because that is the part they enjoy and control. Test the assumption whose failure would end the venture."],
+ v2:["What one question will the test answer?","One question, phrased so a result can answer it.",
+  "\u201cDoes the model agree with the expert grader more often than two expert graders agree with each other?\u201d is a question. \u201cWill people like it?\u201d is not."],
+ v3:["What result would make you stop?","If no result would stop you, this is a demonstration and not a test.",
+  "Write the number or the outcome before you run the test, and do not change it afterwards. This single habit prevents most of the self-deception in early ventures."],
+ v4:["Ready by when, and at what cost?","Two weeks is a good limit. If it cannot run in two weeks, it is too big.",
+  "The cost should be one you can afford to lose entirely, because you may. If a test needs a grant to run, it is not a Version Zero."],
+ ev1:["What did the evidence show?","Including the parts that did not go your way.",
+  "Report what was measured, with the conditions. A disappointing number is still a result, and a venture that reports one honestly is easier to help than one that does not."],
+ ev2:["Looking back at Why you, has anything changed?","Has the evidence changed what you believe, or only what you plan?",
+  "If nothing has changed after a round of testing, it is worth asking whether the testing was real. Evidence that only ever confirms the original idea is usually evidence that was chosen to do so."],
+ pv_keep:["What are you keeping?","The knowledge, access, relationships and work that stay useful whatever you build next.",
+  "Look back at your Why you answers. A founder who has spent two seasons with greenhouse growers keeps that relationship even if the product changes completely. This is usually more valuable than the prototype."],
+ pv_next:["What is the next idea, and what is the cheapest way to test it?","One sentence for the idea, one for the test.",
+  "A pivot is not a fresh start. It should re-use what you already know and reach the people you can already reach, which is why the next test is usually cheaper and faster than the last one."]
+},
+
+itch:["Nobody mentions it until you raise it","Agreed to be a nice idea when asked","Complained about, nothing done",
+ "A workaround has already been built","Money or labour spent on it every season","Tried to solve it and did not succeed"],
+
+forms:[["fake","Fake door","A listing, page or post describing the offer with a price. Measure how many ask for it."],
+ ["conc","Concierge","Deliver the result entirely by hand, openly, for about five users."],
+ ["woz","Wizard of Oz","The user sees something that behaves like a product while a person does the work behind it."],
+ ["vibe","Vibe coded app over a spreadsheet","A working interface made with AI or no-code tools, ready in days."],
+ ["adapt","Adapt a product that already exists","Buy something that works and bend it to the purpose. Usually the fastest route in hardware."],
+ ["msg","A message in a group they already use","A structured weekly message sent by a person. If it is not read, an app will not be read either."],
+ ["pre","Pre-sale, deposit or letter of intent","Ask for money, or a signed commitment naming a quantity and a price."],
+ ["pig","Piggyback on a meeting or market day","Run the test inside a gathering that is already happening."]],
+
+gates:[["g1","The problem is real","Seen in behaviour, and felt by the person who pays."],
+ ["g2","The alternative is understood","Described, priced and compared on the same measure."],
+ ["g3","Demand comes before the product","People acted on Version Zero without being persuaded."],
+ ["g4","Somebody pays","From their own budget, at a price stated in advance."],
+ ["g5","They come back","Repeat use or repeat orders in a second cycle."]],
+
+warns:[["w_family","Everyone who tried it is family, a classmate, or was introduced by the incubator"],
+ ["w_free","It was used free, and no price was ever stated"],
+ ["w_present","A founder was present and helping every time it was used"],
+ ["w_grant","The main evidence is a grant, an award or a competition result"],
+ ["w_few","Fewer than three users in total"]],
+
+blockers:[["b_reg","Regulated or prohibited","Import, flight, licensing or approval is required, and you do not yet have it."],
+ ["b_sub","Subsidy reduces the saving","Water or energy is subsidised, so efficiency is worth less to the farmer than it appears."],
+ ["b_lab","Labour is cheaper","Hand work is available at a day rate your method has to beat."],
+ ["b_imp","Parts are hard to import or replace","Cost, delay and customs, with no local repair route."],
+ ["b_land","Land is held on concession","Users are reluctant to fund fixed equipment they may not keep."],
+ ["b_free","The alternative is free to the user","Advice or a service paid for by someone else, such as a supplier."],
+ ["b_none","None of these apply",""]],
+
+pivots:[["p_cust","Keep the problem, change the customer",
+  "The problem is real but the people you approached do not pay for it. Who else has the same problem and controls a budget? In Agritech this is often a step along the chain: the packhouse rather than the grower, the cooperative rather than the member, the manufacturer rather than the consumer."],
+ ["p_prob","Keep the customer, change the problem",
+  "You have access to a group and they trust you, but the problem you chose is not the one that costs them. Ask what they already spend money on. The itch you are looking for is usually the one they mentioned before you explained your idea."],
+ ["p_sol","Keep both, change the solution",
+  "The problem and the customer hold, but your method is blocked, too costly, or no better than what exists. What is the cheapest way to produce the same outcome, using what is already available locally?"],
+ ["p_pay","Keep all three, change who pays",
+  "People use it but will not pay. Who else benefits enough to fund it? A supplier, a buyer, a cooperative, an insurer, a processor who wants reliable supply."],
+ ["p_part","Become part of something that already works",
+  "The incumbent is trusted and free. Rather than replacing it, you may be able to supply it, improve it, or sell through it."]],
+
+nextTitle:"Where next",
+nextLede:"A filter that does not pass is a result, not a failure. It has told you something true, early, and at low cost. The useful question is not whether to stop, but what to carry forward.",
+nextKeep:"What you have gained does not disappear when an idea changes. The knowledge, the access and the commitment you described in Why you are the assets. The solution is the part that is easiest to replace.",
+pivotH:"How might you pivot?",
+pivotHint:"Based on your answers, the routes marked below are the ones most likely to apply. Consider them all, then write down the one you want to test next.",
+
+verdicts:{
+ CONT:["Continue","All five gates are met and the evidence does not rest on friends, free use or a grant. The work now is to serve more of the same customers and keep measuring."],
+ PIVOT:["Pivot","Nobody is currently acting on this problem, including the person who would pay. Keep what you have learned and change the customer or the problem."],
+ CUST:["Change the customer","The problem may be real, but the person who would pay is not acting on it. Look along the chain for someone who feels the same problem and controls a budget."],
+ SOL:["Change the solution","Your method depends on something you are not yet permitted or able to use. Either resolve that before anything else, or find a way to produce the same outcome without it."],
+ PAY:["Change who pays","People are using it, but a price has never been put in front of anyone. Either test a price now, or look for someone else who benefits enough to fund it."],
+ TEST:["Keep testing","The problem and the demand are holding up. The next gate is about money and repetition, which is where most ventures find out what they really have."],
+ RUN:["Run the test","You have a Version Zero planned. Run it before deciding anything else."],
+ EARLY:["Keep testing","There is not yet enough recorded evidence to judge this idea. The actions below are the shortest route to a decision."]},
+
+actions:{
+ reg:"Confirm in writing what approval your method needs, and whether you can obtain it. Do this before any further building, as it can decide the venture on its own.",
+ why:"Finish the Why you page. An incubator cannot plan support around gaps that have not been named.",
+ gaps:"Name who will fill each gap in the team, with a date. Agronomy, regulation and route to market are the gaps most often left open.",
+ payer:"Identify who uses it, who decides and who pays, by name or role. Confirm with each of them that the others agree.",
+ reach:"Name three people who have this problem and are not friends, family or classmates, and arrange to meet them this month.",
+ score:"Score the itch for the user and for the person who pays, based on what you have watched them do.",
+ lowpayer:"Find out what the person who pays already spends money or effort on. That is where a testable problem will be.",
+ itchev:"Record one piece of proof behind your itch score: a photograph of the workaround, an amount paid, or a quantity lost.",
+ alt:"Document what people do about this today, including doing nothing and accepting the loss. Check the local classifieds and marketplaces for products already in use.",
+ altcost:"Collect the cost of the current method from three separate users, in money or hours, and measure how well it works using the method you will apply to your own.",
+ whynot:"Write down why this has not already been solved. The reason is usually structural, and it shapes what is worth building.",
+ sub:"Recalculate the saving at the price the user actually pays, after subsidy. An efficiency gain that is compelling elsewhere may be worth very little here.",
+ lab:"Cost your method per unit against the local day rate for the work it replaces, including repair and downtime.",
+ imp:"Establish how a part is replaced locally within a week. If it cannot be, treat that as a service problem as well as a supply one.",
+ freealt:"Work out who could fund this instead of the user, since the current alternative costs them nothing.",
+ form:"Choose a Version Zero from the list and set a date. If it cannot run within two weeks, it is too large.",
+ stop:"Write down the result that would make you stop, before running the test, and do not change it afterwards.",
+ run:"Run the test with people outside your own network, and record what they did rather than what they said.",
+ price:"Put a price in front of at least three users and ask them to pay it from their own budget.",
+ repeat:"Find out whether they come back. Define the repeat cycle in advance, and hold to it.",
+ family:"Repeat the test with users nobody introduced you to. Evidence from people with a reason to be kind is not evidence.",
+ present:"Have someone use it without you in the room, and record where they stop.",
+ grant:"Treat the award as recognition rather than demand, and go and gather evidence from users.",
+ few:"Increase the number of users before drawing any conclusion from the result.",
+ hundred:"Write down what it would cost to serve one hundred customers, using figures you have observed rather than estimated.",
+ doc:"Record the calibration or setup procedure so that someone else can repeat your result without you.",
+ again:"Set a date to work through this filter again, after the next round of testing."},
+
+sum:{title:"Summary", untitled:"Untitled venture", stamp:"SIEVE summary",
+ whereH:"Where each filter stands", colFilter:"Filter", colStatus:"Status", colRests:"What that rests on",
+ holds:"Holds", partly:"Partly", notyet:"Not yet",
+ gatesH:"Gates", cautionsH:"Cautions on the evidence", condH:"Structural conditions noted",
+ actionsH:"Recommended next actions", pivotsH:"Pivot routes worth considering",
+ pivotNotesH:"Your pivot notes", keepL:"What you are keeping", nextL:"Next idea and test",
+ answersH:"Your answers",
+ names:["Why you","Someone","Itch","Existing","Version Zero","Evidence"],
+ of6:"%1 of 6 questions answered", of5:"%1 of 5 answered", of4:"%1 of 4 answered",
+ payerYes:", payer identified", payerNo:", payer not identified",
+ notScored:"not scored", user:"user", payer:"payer",
+ evYes:", evidence recorded", evNo:", no evidence recorded",
+ condNoted:", %1 structural condition(s) noted",
+ formsChosen:"%1 form(s) chosen", noForm:"no form chosen",
+ stopYes:", stop condition set", stopNo:", no stop condition",
+ gatesOf:"%1 of 5 gates", cautionFlag:", %1 caution(s) flagged",
+ foot:"SIEVE \u00b7 an idea filter for Agritech ventures. Created by Steve Gray \u00b7 steve@themakerspace.co.za. This summary is generated from your own answers using a fixed set of rules. It is general guidance and does not replace the judgement of people who know your market."}
+},
+
+fr: {
+dir:"ltr", label:"Français", other:"English", otherCode:"en",
+brand:"Un filtre à idées pour les projets Agritech",
+theme:["Sombre","Clair"], clear:"Effacer", progress:"Progression",
+back:"Retour", next:"Suivant", startBtn:"Commencer", print:"Imprimer ou enregistrer en PDF",
+download:"Télécharger une copie", savedNote:"Enregistré sur cet appareil",
+stepOf:"Étape %1 sur %2 : %3", skip:"Aller au contenu",
+confirmClear:"Effacer tout ce que vous avez saisi sur cet appareil ?",
+whyQ:"Pourquoi cette question", passesWhen:"Ce filtre est validé lorsque", whyFilter:"Pourquoi nous filtrons cela",
+
+nav:["Début","Pourquoi vous","Sujets","Irritation","Existant","Version Zéro","Preuves","Et maintenant","Synthèse"],
+
+introTitle:"Un filtre à idées pour les projets Agritech",
+introP1:"Les projets Agritech sont souvent sélectionnés et financés sur la qualité d\u2019une présentation. Une bonne présentation montre que quelqu\u2019un sait exposer une idée. Elle ne montre pas que le problème est réel, que des gens paieront pour le résoudre, ni que l\u2019équipe peut livrer. SIEVE remplace la question <em>cette idée est-elle convaincante ?</em> par <em>qu\u2019a-t-on réellement observé ?</em>",
+introP2:"Son but n\u2019est pas de rejeter des idées. Il est de déterminer tôt, et à faible coût, lesquelles méritent du temps, de l\u2019argent et un accompagnement, et de montrer aux autres comment elles pourraient évoluer.",
+cards:[
+ ["","Pourquoi vous","Pourquoi vous êtes bien placé pour résoudre cela. Une réflexion, pas un argumentaire."],
+ ["S","Sujets","Qui rencontre le problème, qui paie, et combien ils sont."],
+ ["I","Irritation","L\u2019intensité du problème, jugée d\u2019après ce que les gens font déjà."],
+ ["E","Existant","Ce qui se fait aujourd\u2019hui à la place. Il y a toujours quelque chose."],
+ ["V","Version Zéro","Le test le moins coûteux de l\u2019hypothèse la plus susceptible d\u2019être fausse."],
+ ["E","Preuves","Ce qui a été observé, consigné, et peut être montré."]],
+howTitle:"Mode d\u2019emploi",
+how:["Parcourez les filtres dans l\u2019ordre. Chacun se valide avec un élément recueilli, non avec un argument.",
+ "Laissez une case vide plutôt que de deviner. Les blancs constituent votre plan de travail.",
+ "Les réponses restent sur cet appareil uniquement. Rien n\u2019est envoyé nulle part.",
+ "À la fin, vous obtenez une synthèse d\u2019une page, à imprimer ou à enregistrer, avec les actions recommandées.",
+ "Revenez-y après chaque série de tests."],
+yourVenture:"Votre projet", mVname:"Projet ou idée", mVwho:"Fondateurs",
+disclaimer:"Cet outil donne des orientations générales. Il ne remplace pas le jugement de personnes qui connaissent votre marché, et ne constitue pas un conseil professionnel.",
+
+steps:{
+ why:{title:"Pourquoi vous", lede:"Pourquoi vous êtes bien placé pour résoudre cela. Une réflexion, pas un argumentaire.",
+  principle:"Les idées sont rarement uniques. Ce qui décide de la plupart des projets naissants, ce sont les personnes qui les portent : comprennent-elles le problème mieux que d\u2019autres, peuvent-elles atteindre ceux qui le vivent, et tiendront-elles pendant les saisons lentes et les tests ratés. L\u2019envie, la conviction et le travail comptent. Les connaissances, l\u2019accès et les compétences aussi.",
+  passes:"Vous pouvez démontrer, et pas seulement affirmer, un avantage que quelqu\u2019un qui commencerait demain n\u2019aurait pas : connaissance, accès, compétence ou engagement.",
+  note:"La conviction est utile lorsqu\u2019elle porte sur le problème. Elle devient un risque lorsqu\u2019elle se fixe sur une solution et empêche d\u2019entendre les preuves. Il vous sera demandé de revenir à cette page une fois les preuves réunies."},
+ someone:{title:"Sujets", lede:"Qui rencontre le problème, qui paie, et combien ils sont.",
+  principle:"Une idée a besoin de personnes qui vivent le problème, que l\u2019on peut atteindre, et qui paieront. La plupart des projets naissants décrivent leur marché de façon trop large pour l\u2019atteindre, ou trop étroite pour faire vivre une entreprise. Celui qui utilise, celui qui décide et celui qui paie sont souvent différents, et les trois doivent être d\u2019accord.",
+  passes:"Le groupe est assez précis pour être atteint, assez important en nombre ou en valeur pour faire vivre une entreprise, et la personne qui paie est identifiée."},
+ itch:{title:"Irritation", lede:"L\u2019intensité du problème, jugée d\u2019après ce que les gens font déjà pour y remédier.",
+  principle:"L\u2019intérêt poli est le faux signal le plus courant. Les gens conviennent qu\u2019une idée est bonne, puis ne font rien. Ce qu\u2019ils dépensent déjà, en argent, en temps ou en effort, montre l\u2019importance réelle du problème. Un problème sur lequel personne n\u2019agit devient rarement un problème que l\u2019on paiera pour résoudre.",
+  passes:"La personne qui paie consacre déjà de l\u2019argent, du temps ou de l\u2019effort à ce problème.",
+  scaleHint:"Notez d\u2019après ce que vous les avez vus faire, non d\u2019après ce qu\u2019ils vous ont dit. Les niveaux 3 et plus méritent d\u2019être testés. En dessous, il s\u2019agit d\u2019une préférence plutôt que d\u2019une situation sur laquelle les gens agissent déjà.",
+  scaleUser:"Intensité ressentie par l\u2019utilisateur", scalePayer:"Intensité ressentie par celui qui paie"},
+ existing:{title:"Existant", lede:"Ce qui se fait aujourd\u2019hui à la place. Il y a toujours quelque chose.",
+  principle:"Le véritable concurrent est ce que les gens font déjà, y compris accepter la perte. Cela fixe le niveau à dépasser, et suffisamment pour que le changement vaille la peine. La raison pour laquelle un problème n\u2019est pas résolu est généralement structurelle, et elle décide souvent si une idée peut fonctionner.",
+  passes:"L\u2019alternative est décrite du point de vue de l\u2019utilisateur et chiffrée, et vous pouvez dire en quoi vous serez nettement meilleur sur un point qui compte pour lui.",
+  blockersH:"Lesquelles de ces conditions s\u2019appliquent ici ?",
+  blockersHint:"Ces conditions décident si une idée peut fonctionner, quelle que soit sa qualité. Cochez tout ce qui s\u2019applique."},
+ v0:{title:"Version Zéro", lede:"Le test le moins coûteux de l\u2019hypothèse la plus susceptible d\u2019être fausse.",
+  principle:"Construire est la manière la plus coûteuse d\u2019apprendre. Une grande part de ce que dépensent les projets naissants sert à construire des choses dont la demande n\u2019a jamais été vérifiée. La Version Zéro n\u2019est pas un petit produit. C\u2019est un test, fait de ce que vous pouvez déjà utiliser et payer, qui répond rapidement à une question.",
+  passes:"Elle a produit un résultat qui aurait pu vous arrêter, à un coût que vous pouviez perdre.",
+  formsH:"Choisissez la forme la moins coûteuse qui répond à votre question",
+  note:"Tout ce qui commande l\u2019eau, l\u2019énergie ou une machine commence par indiquer seulement ce qu\u2019il aurait fait. La commande se mérite, une fois les recommandations couramment acceptées."},
+ evidence:{title:"Preuves", lede:"Ce qui a été observé, consigné, et peut être montré.",
+  principle:"Une subvention, un prix ou une bonne présentation ne prouvent pas que quelqu\u2019un veut un produit. Une preuve est un élément consigné qu\u2019une personne sans intérêt dans l\u2019idée trouverait convaincant. Les jalons se prennent dans l\u2019ordre, car on ne peut démontrer la demande pour un problème dont l\u2019existence n\u2019est pas établie.",
+  passes:"Une personne sans intérêt dans l\u2019idée serait convaincue par ce que vous pouvez lui montrer.",
+  gatesH:"Cinq jalons, dans l\u2019ordre",
+  gatesHint:"Ne cochez un jalon que si vous disposez d\u2019un élément consigné que vous pourriez montrer à quelqu\u2019un sans intérêt dans l\u2019idée.",
+  warnH:"Votre preuve relève-t-elle de l\u2019un de ces cas ?",
+  warnHint:"Être honnête ici change ce qui vous sera conseillé ensuite. Cela ne vous pénalise pas.",
+  enoughH:"Combien faut-il de preuves ?",
+  enough:"Assez pour convaincre quelqu\u2019un sans intérêt dans l\u2019idée. Pour un produit grand public, cela signifie beaucoup de personnes. Pour quelques gros acheteurs, cela signifie des commandes répétées de plusieurs d\u2019entre eux. Jugez en nombre et en valeur."}
+},
+
+fields:{
+ why1:["En quoi ce problème vous concerne-t-il ?","Où l\u2019avez-vous rencontré ? Famille, travail, études, l\u2019exploitation.",
+  "Les fondateurs qui tiennent dans la durée ont généralement rencontré le problème avant d\u2019avoir une solution. Si la réponse honnête est que vous avez d\u2019abord rencontré la technologie et cherché un usage, dites-le ici. Ce n\u2019est pas éliminatoire, mais cela indique qu\u2019il faut passer plus de temps avec les personnes concernées avant de construire."],
+ why2:["Que savez-vous à ce sujet que d\u2019autres ignorent ?","Du temps sur le terrain ou dans le métier. Des connaissances acquises sur des années.",
+  "C\u2019est la question qui distingue une idée que n\u2019importe qui pourrait avoir d\u2019une idée que vous êtes placé pour poursuivre. Les réponses utiles sont précises : des saisons travaillées, un métier appris, un procédé que vous avez conduit vous-même. Un diplôme dans un domaine voisin est un début, pas une réponse."],
+ why3:["Qui pouvez-vous atteindre que d\u2019autres ne peuvent pas ?","Producteurs, acheteurs, coopératives, fournisseurs, administrations.",
+  "L\u2019accès vaut souvent plus que la compétence technique au démarrage. Si vous pouvez obtenir ce mois-ci un rendez-vous avec un responsable de station ou un comité de coopérative, c\u2019est un avantage réel. Si vous ne pouvez atteindre personne qui vive le problème, votre première tâche est d\u2019y remédier, non de construire."],
+ why4:["Que l\u2019équipe sait-elle faire, et que lui manque-t-il ?","Nommez chaque manque, et qui le comblera.",
+  "Les manques sont normaux et ne sont pas une raison d\u2019arrêter. C\u2019est à cela que servent un incubateur, un mentor ou un partenaire. Le risque est le manque non identifié. L\u2019agronomie, la réglementation et l\u2019accès au marché sont les trois plus souvent absents des équipes Agritech."],
+ why5:["Qu\u2019y avez-vous déjà consacré ?","Du temps, de l\u2019argent, des saisons, des tentatives qui ont échoué.",
+  "L\u2019engagement se voit dans ce qui a déjà été fait plutôt que dans ce qui est promis. Un travail déjà réalisé à vos frais est l\u2019un des signaux les plus forts qu\u2019un fondateur puisse donner, et un incubateur peut le vérifier."],
+ why6:["Y travaillerez-vous encore dans deux saisons ?","L\u2019Agritech avance au rythme de la culture. Qu\u2019est-ce qui vous ferait arrêter ?",
+  "La plupart des preuves en Agritech demandent une saison. Un projet qui exige des résultats en trois mois abandonnera le travail ou faussera la mesure. L\u2019honnêteté ici aide tout le monde à planifier."],
+ s1:["Qui exactement rencontre ce problème ?","Décrivez-les par ce qu\u2019ils font, non par leur secteur.",
+  "\u00ab Les producteurs de dattes \u00bb est trop large pour être atteint par un canal unique. \u00ab Les stations qui achètent en gros et vendent au calibre \u00bb peut être listé, visité et compté. Si votre description ne peut devenir une liste de noms, affinez-la jusqu\u2019à ce qu\u2019elle le puisse."],
+ s2:["Quelle est la taille de ce marché ?","En nombre et en valeur.",
+  "La taille n\u2019est pas seulement un effectif. Un projet vendant à huit fabricants qui recommandent chaque mois peut valoir bien plus qu\u2019un projet vendant occasionnellement à mille petits exploitants. Estimez le volume et le chiffre d\u2019affaires autant que le nombre de clients, et dites lequel des deux porte l\u2019entreprise."],
+ s3:["Qui l\u2019utilise, qui décide, et qui paie ?","Nommez une personne ou une fonction pour chacun.",
+  "Dans une exploitation familiale, ce sont souvent trois personnes : l\u2019ouvrier qui l\u2019utilise, l\u2019aîné qui décide, et celui qui tient l\u2019argent. Dans une coopérative ou une station, le service qualité détient souvent la décision réelle, car il doit documenter chaque intrant. Un produit qui ne convient qu\u2019à l\u2019un des trois ne s\u2019achète pas."],
+ s4:["Qui perd si vous réussissez ?","Un intermédiaire, un fournisseur, un trieur, un contremaître.",
+  "Quelqu\u2019un est généralement écarté, et il est souvent plus proche de votre utilisateur que vous. Il est parfois aussi votre voie d\u2019accès au marché, ce qui vaut la peine d\u2019être compris tôt plutôt que découvert tard."],
+ s5:["Comment allez-vous les atteindre ?","Nommez trois personnes hors de votre cercle d\u2019amis, de famille et de camarades.",
+  "Si vous ne pouvez en nommer trois, vous n\u2019avez pas encore accès à ce marché, et c\u2019est le premier problème à résoudre. Coopératives, chambres d\u2019agriculture, fournisseurs d\u2019intrants, jours de marché et marchés de gros sont les voies habituelles."],
+ i1:["À quelle fréquence est-il ressenti ?","Chaque jour, chaque semaine, une fois par saison, une fois par an.",
+  "La fréquence détermine la vitesse d\u2019apprentissage. Un problème hebdomadaire permet de tester en un mois. Un problème annuel, comme la pollinisation ou la récolte, impose de définir à l\u2019avance une mesure de substitution et de s\u2019y tenir, sinon il faut attendre un an."],
+ i2:["Qu\u2019avez-vous observé qui le montre ?","Un bricolage, une somme dépensée, une perte consignée, leurs propres mots notés.",
+  "C\u2019est la preuve derrière votre note. Une photographie d\u2019un flotteur câblé sur un contacteur, un tarif journalier versé à quelqu\u2019un qui va ouvrir les vannes, une quantité de fruits déclassée la saison dernière. Si le seul appui est que l\u2019idée a semblé utile à quelqu\u2019un, la note est 1."],
+ e1:["Que font-ils aujourd\u2019hui face à ce problème ?","Une personne, un carnet, un groupe WhatsApp, un appareil importé, ou rien.",
+  "La réponse n\u2019est jamais \u00ab rien \u00bb. Lorsqu\u2019elle semble l\u2019être, l\u2019alternative est que l\u2019utilisateur accepte la perte, et cette perte a une valeur que vous pouvez estimer avec lui. Consultez les petites annonces et places de marché locales avant de conclure qu\u2019aucun produit n\u2019existe."],
+ e2:["Combien cela leur coûte-t-il, et dans quelle mesure cela fonctionne-t-il ?","Demandez aux utilisateurs plutôt que d\u2019estimer. Mesurez comme vous mesurerez votre propre solution.",
+  "Recueillez le chiffre auprès de trois utilisateurs distincts, et non d\u2019un seul ni de votre propre hypothèse. Si vous ne pouvez mesurer la méthode actuelle, vous ne pourrez prétendre l\u2019avoir dépassée. Deux trieurs expérimentés s\u2019accordant sur 86 dattes sur 100 est le genre de chiffre qui tranche un débat."],
+ e3:["Pourquoi personne n\u2019a-t-il déjà résolu cela ?","Subvention, main-d\u2019\u0153uvre peu coûteuse, foncier, règles d\u2019importation, trésorerie, réglementation.",
+  "Il y a presque toujours une raison, et elle est plus souvent structurelle que technique. L\u2019écrire clarifie généralement ce à quoi le projet se heurte. Si vous ne trouvez pas de raison, vous ne comprenez peut-être pas encore le problème."],
+ e4:["Pourquoi changeraient-ils pour vous ?","Qu\u2019est-ce qui cesse d\u2019être utilisé le jour où vous réussissez, et que coûte le changement ?",
+  "Si rien ne cesse d\u2019être utilisé, vous vous ajoutez aux coûts de l\u2019utilisateur au lieu de les remplacer, et l\u2019argument doit être bien plus solide. Le coût du changement inclut le désapprentissage, l\u2019explication à un tiers, et le risque d\u2019une mauvaise saison."],
+ v1:["Quelle hypothèse est la plus susceptible d\u2019être fausse ?","Si celle-ci est fausse, le projet ne tient pas.",
+  "C\u2019est généralement que quelqu\u2019un en veut, ou qu\u2019il paiera. Les équipes testent plus souvent si la technologie fonctionne, car c\u2019est la partie qu\u2019elles maîtrisent et apprécient. Testez l\u2019hypothèse dont l\u2019échec mettrait fin au projet."],
+ v2:["À quelle question unique le test répondra-t-il ?","Une seule question, formulée pour qu\u2019un résultat puisse y répondre.",
+  "\u00ab Le modèle s\u2019accorde-t-il avec le trieur expérimenté plus souvent que deux trieurs expérimentés entre eux ? \u00bb est une question. \u00ab Les gens vont-ils aimer ? \u00bb n\u2019en est pas une."],
+ v3:["Quel résultat vous ferait arrêter ?","Si aucun résultat ne vous arrêterait, il s\u2019agit d\u2019une démonstration et non d\u2019un test.",
+  "Écrivez le chiffre ou l\u2019issue avant de lancer le test, et ne les modifiez pas ensuite. Cette seule habitude évite l\u2019essentiel de l\u2019auto-illusion."],
+ v4:["Prêt pour quand, et à quel coût ?","Deux semaines est une bonne limite. Si cela ne peut tourner en deux semaines, c\u2019est trop grand.",
+  "Le coût doit être un coût que vous pouvez perdre entièrement, car cela peut arriver. Si un test nécessite une subvention, ce n\u2019est pas une Version Zéro."],
+ ev1:["Qu\u2019ont montré les preuves ?","Y compris ce qui ne vous a pas été favorable.",
+  "Rapportez ce qui a été mesuré, avec les conditions. Un chiffre décevant reste un résultat, et un projet qui le rapporte honnêtement est plus facile à aider qu\u2019un autre."],
+ ev2:["En relisant Pourquoi vous, quelque chose a-t-il changé ?","Les preuves ont-elles changé ce que vous croyez, ou seulement ce que vous prévoyez ?",
+  "Si rien n\u2019a changé après une série de tests, il faut se demander si les tests étaient réels. Des preuves qui ne font que confirmer l\u2019idée de départ ont généralement été choisies pour cela."],
+ pv_keep:["Que gardez-vous ?","Les connaissances, l\u2019accès, les relations et le travail qui restent utiles quoi que vous construisiez ensuite.",
+  "Relisez vos réponses à Pourquoi vous. Un fondateur qui a passé deux saisons auprès de maraîchers sous serre garde cette relation même si le produit change entièrement. Cela vaut généralement plus que le prototype."],
+ pv_next:["Quelle est l\u2019idée suivante, et le moyen le moins coûteux de la tester ?","Une phrase pour l\u2019idée, une pour le test.",
+  "Un pivot n\u2019est pas un nouveau départ. Il doit réutiliser ce que vous savez déjà et atteindre les gens que vous pouvez déjà atteindre, c\u2019est pourquoi le test suivant est généralement plus rapide et moins coûteux."]
+},
+
+itch:["Personne n\u2019en parle avant que vous n\u2019abordiez le sujet","On reconnaît que l\u2019idée est bonne lorsqu\u2019on le demande","On s\u2019en plaint, sans rien faire",
+ "Une solution de fortune a déjà été bricolée","De l\u2019argent ou du travail y est consacré chaque saison","On a tenté de le résoudre, sans y parvenir"],
+
+forms:[["fake","Porte factice","Une annonce, une page ou une publication décrivant l\u2019offre avec un prix. Mesurez combien la demandent."],
+ ["conc","Conciergerie","Fournir le résultat entièrement à la main, ouvertement, pour environ cinq utilisateurs."],
+ ["woz","Magicien d\u2019Oz","L\u2019utilisateur voit quelque chose qui se comporte comme un produit, tandis qu\u2019une personne fait le travail derrière."],
+ ["vibe","Application générée par IA sur un tableur","Une interface fonctionnelle produite avec des outils d\u2019IA ou sans code, prête en quelques jours."],
+ ["adapt","Détourner un produit existant","Achetez une chose qui fonctionne et adaptez-la. Généralement la voie la plus rapide en matériel."],
+ ["msg","Un message dans un groupe qu\u2019ils utilisent déjà","Un message hebdomadaire structuré envoyé par une personne. S\u2019il n\u2019est pas lu, une application ne le sera pas davantage."],
+ ["pre","Prévente, acompte ou lettre d\u2019intention","Demandez de l\u2019argent, ou un engagement signé précisant une quantité et un prix."],
+ ["pig","S\u2019adosser à une réunion ou un jour de marché","Menez le test au sein d\u2019un rassemblement qui a déjà lieu."]],
+
+gates:[["g1","Le problème est réel","Observé dans les comportements, et ressenti par celui qui paie."],
+ ["g2","L\u2019existant est compris","Décrit, chiffré et comparé sur la même mesure."],
+ ["g3","La demande précède le produit","Des gens ont agi sur la Version Zéro sans être persuadés."],
+ ["g4","Quelqu\u2019un paie","Sur son propre budget, à un prix annoncé à l\u2019avance."],
+ ["g5","Ils reviennent","Usage répété ou commandes répétées sur un second cycle."]],
+
+warns:[["w_family","Tous ceux qui l\u2019ont essayé sont de la famille, des camarades, ou présentés par l\u2019incubateur"],
+ ["w_free","Il a été utilisé gratuitement, et aucun prix n\u2019a jamais été énoncé"],
+ ["w_present","Un fondateur était présent et aidait à chaque utilisation"],
+ ["w_grant","La preuve principale est une subvention, un prix ou un concours"],
+ ["w_few","Moins de trois utilisateurs au total"]],
+
+blockers:[["b_reg","Réglementé ou interdit","Une importation, un vol, une licence ou une autorisation est requise, et vous ne l\u2019avez pas encore."],
+ ["b_sub","La subvention réduit l\u2019économie","L\u2019eau ou l\u2019énergie est subventionnée : l\u2019efficience vaut moins pour l\u2019agriculteur qu\u2019il n\u2019y paraît."],
+ ["b_lab","La main-d\u2019\u0153uvre est moins chère","Le travail manuel est disponible à un tarif journalier que votre méthode doit battre."],
+ ["b_imp","Pièces difficiles à importer ou à remplacer","Coût, délai et douane, sans voie de réparation locale."],
+ ["b_land","Terre détenue en concession","Les utilisateurs hésitent à financer un équipement fixe qu\u2019ils pourraient ne pas garder."],
+ ["b_free","L\u2019alternative est gratuite pour l\u2019utilisateur","Un conseil ou un service payé par un tiers, par exemple un fournisseur."],
+ ["b_none","Aucune ne s\u2019applique",""]],
+
+pivots:[["p_cust","Garder le problème, changer de client",
+  "Le problème est réel mais ceux que vous avez approchés ne paient pas pour le résoudre. Qui d\u2019autre vit le même problème et dispose d\u2019un budget ? En Agritech, c\u2019est souvent un maillon plus loin : la station plutôt que le producteur, la coopérative plutôt que l\u2019adhérent, le fabricant plutôt que le consommateur."],
+ ["p_prob","Garder le client, changer de problème",
+  "Vous avez accès à un groupe qui vous fait confiance, mais le problème choisi n\u2019est pas celui qui leur coûte. Demandez ce pour quoi ils dépensent déjà. L\u2019irritation que vous cherchez est généralement celle qu\u2019ils ont mentionnée avant que vous n\u2019exposiez votre idée."],
+ ["p_sol","Garder les deux, changer de solution",
+  "Le problème et le client tiennent, mais votre méthode est bloquée, trop coûteuse, ou pas meilleure que l\u2019existant. Quel est le moyen le moins coûteux d\u2019obtenir le même résultat avec ce qui est déjà disponible localement ?"],
+ ["p_pay","Garder les trois, changer de payeur",
+  "Les gens l\u2019utilisent mais ne paieront pas. Qui d\u2019autre en tire assez de bénéfice pour le financer ? Un fournisseur, un acheteur, une coopérative, un assureur, un transformateur qui veut un approvisionnement fiable."],
+ ["p_part","Devenir une partie de ce qui fonctionne déjà",
+  "L\u2019acteur en place est gratuit et jouit de la confiance. Plutôt que de le remplacer, vous pouvez peut-être l\u2019approvisionner, l\u2019améliorer, ou vendre à travers lui."]],
+
+nextTitle:"Et maintenant",
+nextLede:"Un filtre qui n\u2019est pas validé est un résultat, non un échec. Il vous a appris quelque chose de vrai, tôt, et à faible coût. La question utile n\u2019est pas s\u2019il faut arrêter, mais ce qu\u2019il faut emporter.",
+nextKeep:"Ce que vous avez acquis ne disparaît pas quand une idée change. Les connaissances, l\u2019accès et l\u2019engagement décrits dans Pourquoi vous sont les actifs. La solution est la partie la plus facile à remplacer.",
+pivotH:"Comment pourriez-vous pivoter ?",
+pivotHint:"D\u2019après vos réponses, les voies signalées ci-dessous sont les plus susceptibles de s\u2019appliquer. Examinez-les toutes, puis notez celle que vous voulez tester ensuite.",
+
+verdicts:{
+ CONT:["Poursuivre","Les cinq jalons sont franchis et les preuves ne reposent ni sur des proches, ni sur un usage gratuit, ni sur une subvention. Le travail consiste maintenant à servir davantage de clients semblables et à continuer de mesurer."],
+ PIVOT:["Pivoter","Personne n\u2019agit actuellement sur ce problème, y compris celui qui paierait. Gardez ce que vous avez appris et changez de client ou de problème."],
+ CUST:["Changer de client","Le problème est peut-être réel, mais celui qui paierait n\u2019agit pas. Cherchez le long de la filière quelqu\u2019un qui vit le même problème et dispose d\u2019un budget."],
+ SOL:["Changer de solution","Votre méthode dépend d\u2019une chose que vous n\u2019êtes pas encore autorisé ou en mesure d\u2019utiliser. Réglez-le avant tout le reste, ou trouvez le moyen d\u2019obtenir le même résultat sans elle."],
+ PAY:["Changer de payeur","Les gens l\u2019utilisent, mais aucun prix n\u2019a jamais été présenté. Testez un prix maintenant, ou cherchez quelqu\u2019un d\u2019autre qui en tire assez de bénéfice pour le financer."],
+ TEST:["Continuer à tester","Le problème et la demande tiennent. Le jalon suivant porte sur l\u2019argent et la répétition, où la plupart des projets découvrent ce qu\u2019ils ont réellement."],
+ RUN:["Lancer le test","Vous avez une Version Zéro prévue. Lancez-la avant de décider quoi que ce soit."],
+ EARLY:["Continuer à tester","Les preuves consignées ne suffisent pas encore pour juger cette idée. Les actions ci-dessous sont le chemin le plus court vers une décision."]},
+
+actions:{
+ reg:"Faites confirmer par écrit quelle autorisation votre méthode exige, et si vous pouvez l\u2019obtenir. Faites-le avant toute construction, car cela peut décider du projet à soi seul.",
+ why:"Terminez la page Pourquoi vous. Un incubateur ne peut organiser un accompagnement autour de manques non identifiés.",
+ gaps:"Indiquez qui comblera chaque manque dans l\u2019équipe, avec une date. L\u2019agronomie, la réglementation et l\u2019accès au marché sont les manques le plus souvent laissés ouverts.",
+ payer:"Identifiez qui l\u2019utilise, qui décide et qui paie, par nom ou par fonction. Vérifiez auprès de chacun que les autres sont d\u2019accord.",
+ reach:"Nommez trois personnes qui vivent ce problème et ne sont ni des amis, ni de la famille, ni des camarades, et organisez une rencontre ce mois-ci.",
+ score:"Notez l\u2019irritation pour l\u2019utilisateur et pour celui qui paie, d\u2019après ce que vous les avez vus faire.",
+ lowpayer:"Découvrez ce pour quoi celui qui paie dépense déjà de l\u2019argent ou de l\u2019effort. C\u2019est là que se trouvera un problème testable.",
+ itchev:"Consignez une preuve de votre note d\u2019irritation : une photographie du bricolage, une somme versée, ou une quantité perdue.",
+ alt:"Documentez ce que les gens font aujourd\u2019hui, y compris ne rien faire et accepter la perte. Consultez les petites annonces et places de marché locales pour les produits déjà utilisés.",
+ altcost:"Recueillez le coût de la méthode actuelle auprès de trois utilisateurs distincts, en argent ou en heures, et mesurez son efficacité avec la méthode que vous appliquerez à la vôtre.",
+ whynot:"Écrivez pourquoi cela n\u2019a pas déjà été résolu. La raison est généralement structurelle, et elle oriente ce qui vaut la peine d\u2019être construit.",
+ sub:"Recalculez l\u2019économie au prix réellement payé par l\u2019utilisateur, après subvention. Un gain d\u2019efficience convaincant ailleurs peut valoir très peu ici.",
+ lab:"Chiffrez votre méthode à l\u2019unité face au tarif journalier local du travail qu\u2019elle remplace, réparation et immobilisation comprises.",
+ imp:"Établissez comment une pièce se remplace localement en une semaine. Si ce n\u2019est pas possible, traitez-le comme un problème de service autant que d\u2019approvisionnement.",
+ freealt:"Déterminez qui pourrait financer cela à la place de l\u2019utilisateur, puisque l\u2019alternative actuelle ne lui coûte rien.",
+ form:"Choisissez une Version Zéro dans la liste et fixez une date. Si elle ne peut tourner en deux semaines, elle est trop grande.",
+ stop:"Écrivez le résultat qui vous ferait arrêter, avant de lancer le test, et ne le modifiez pas ensuite.",
+ run:"Menez le test avec des personnes hors de votre réseau, et consignez ce qu\u2019elles ont fait plutôt que ce qu\u2019elles ont dit.",
+ price:"Présentez un prix à au moins trois utilisateurs et demandez-leur de le payer sur leur propre budget.",
+ repeat:"Vérifiez s\u2019ils reviennent. Définissez le cycle de répétition à l\u2019avance, et tenez-vous-y.",
+ family:"Refaites le test avec des utilisateurs que personne ne vous a présentés. Une preuve venant de gens qui ont une raison d\u2019être aimables n\u2019est pas une preuve.",
+ present:"Faites utiliser l\u2019outil sans vous dans la pièce, et notez où la personne s\u2019arrête.",
+ grant:"Considérez le prix comme une reconnaissance et non comme une demande, et allez recueillir des preuves auprès des utilisateurs.",
+ few:"Augmentez le nombre d\u2019utilisateurs avant de tirer une conclusion du résultat.",
+ hundred:"Écrivez ce que coûterait le service de cent clients, à partir de chiffres observés plutôt qu\u2019estimés.",
+ doc:"Consignez la procédure de calibrage ou d\u2019installation afin qu\u2019un tiers puisse reproduire votre résultat sans vous.",
+ again:"Fixez une date pour reprendre ce filtre, après la prochaine série de tests."},
+
+sum:{title:"Synthèse", untitled:"Projet sans titre", stamp:"Synthèse SIEVE",
+ whereH:"Où en est chaque filtre", colFilter:"Filtre", colStatus:"État", colRests:"Sur quoi cela repose",
+ holds:"Tient", partly:"En partie", notyet:"Pas encore",
+ gatesH:"Jalons", cautionsH:"Réserves sur les preuves", condH:"Conditions structurelles relevées",
+ actionsH:"Actions recommandées", pivotsH:"Voies de pivot à envisager",
+ pivotNotesH:"Vos notes de pivot", keepL:"Ce que vous gardez", nextL:"Idée suivante et test",
+ answersH:"Vos réponses",
+ names:["Pourquoi vous","Sujets","Irritation","Existant","Version Zéro","Preuves"],
+ of6:"%1 réponses sur 6", of5:"%1 réponses sur 5", of4:"%1 réponses sur 4",
+ payerYes:", payeur identifié", payerNo:", payeur non identifié",
+ notScored:"non noté", user:"utilisateur", payer:"payeur",
+ evYes:", preuve consignée", evNo:", aucune preuve consignée",
+ condNoted:", %1 condition(s) structurelle(s) relevée(s)",
+ formsChosen:"%1 forme(s) choisie(s)", noForm:"aucune forme choisie",
+ stopYes:", condition d\u2019arrêt définie", stopNo:", pas de condition d\u2019arrêt",
+ gatesOf:"%1 jalons sur 5", cautionFlag:", %1 réserve(s) signalée(s)",
+ foot:"SIEVE \u00b7 un filtre à idées pour les projets Agritech. Créé par Steve Gray \u00b7 steve@themakerspace.co.za. Cette synthèse est générée à partir de vos propres réponses selon un ensemble de règles fixes. Elle donne des orientations générales et ne remplace pas le jugement de personnes qui connaissent votre marché."}
+}
+};
+
+</script>
+<script>
+(function(){
+"use strict";
+
+var ORDER = ["start","why","someone","itch","existing","v0","evidence","next","summary"];
+var FIELDS = {
+  why:["why1","why2","why3","why4","why5","why6"],
+  someone:["s1","s2","s3","s4","s5"],
+  itch:["i1","i2"],
+  existing:["e1","e2","e3","e4"],
+  v0:["v1","v2","v3","v4"],
+  evidence:["ev1","ev2"]
+};
+var KEY = "sieve.v1";
+var S = {meta:{}, f:{}, c:{}, itch:{self:null,payer:null}};
+var lang = "en", T = C.en, cur = 0;
+
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var o = JSON.parse(raw);
+      if(o && typeof o === "object"){ S.meta=o.meta||{}; S.f=o.f||{}; S.c=o.c||{}; S.itch=o.itch||{self:null,payer:null}; } }
+  }catch(e){}
+  try{ var l = localStorage.getItem(KEY+".lang"); if(l === "fr" || l === "en") lang = l; }catch(e){}
+  if(lang === "en"){
+    var n = (navigator.language||"").toLowerCase();
+    var seen = false; try{ seen = !!localStorage.getItem(KEY+".lang"); }catch(e){}
+    if(!seen && n.indexOf("fr") === 0) lang = "fr";
+  }
+  T = C[lang];
+}
+var tmr=null;
+function save(){
+  clearTimeout(tmr);
+  tmr = setTimeout(function(){
+    try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+    var n = document.getElementById("savedNote"); if(n) n.textContent = T.savedNote;
+  },350);
+}
+function txt(k){ return (S.f[k]||"").trim(); }
+function chk(k){ return !!S.c[k]; }
+function cnt(ks){ var n=0; ks.forEach(function(k){ if(txt(k)) n++; }); return n; }
+function sub(s){ var a=arguments; return String(s).replace(/%(\d)/g,function(_,i){ return a[+i]; }); }
+function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
+function el(t,c,h){ var e=document.createElement(t); if(c)e.className=c; if(h!==undefined)e.innerHTML=h; return e; }
+
+/* ---------- pieces ---------- */
+function explain(text){
+  var w = el("div","explain"); w.setAttribute("data-open","0");
+  var b = el("button","", "<span class='chev'>\u203A</span> " + T.whyQ);
+  b.type="button"; b.setAttribute("aria-expanded","false");
+  var body = el("div","body", text);
+  var id = "x"+Math.random().toString(36).slice(2,8); body.id=id; b.setAttribute("aria-controls",id);
+  var sticky=false;
+  function set(o){ w.setAttribute("data-open",o?"1":"0"); b.setAttribute("aria-expanded",o?"true":"false"); }
+  b.addEventListener("click",function(){ sticky=!sticky; set(sticky); });
+  w.addEventListener("mouseenter",function(){ if(!sticky) set(true); });
+  w.addEventListener("mouseleave",function(){ if(!sticky) set(false); });
+  b.addEventListener("focus",function(){ set(true); });
+  b.addEventListener("blur",function(){ if(!sticky) set(false); });
+  w.appendChild(b); w.appendChild(body); return w;
+}
+function field(k, short){
+  var d = T.fields[k]; if(!d) return el("div");
+  var w = el("div","field"), id = "f_"+k;
+  var l = el("label","q", d[0]); l.setAttribute("for", id); w.appendChild(l);
+  if(d[1]) w.appendChild(el("p","hint", d[1]));
+  if(d[2]) w.appendChild(explain(d[2]));
+  var ta = short ? document.createElement("input") : document.createElement("textarea");
+  if(short) ta.type="text"; else ta.rows=3;
+  ta.id=id; ta.value = S.f[k]||"";
+  ta.addEventListener("input", function(){ S.f[k]=ta.value; save(); });
+  w.appendChild(ta); return w;
+}
+function checks(items, warn){
+  var w = el("div","choices");
+  items.forEach(function(it){
+    var key=it[0], lab=it[1], s=it[2]||"";
+    var l = el("label","choice"+(warn?" warn":""));
+    var i = document.createElement("input"); i.type="checkbox"; i.checked=chk(key);
+    i.addEventListener("change", function(){ S.c[key]=i.checked; save(); });
+    l.appendChild(i);
+    l.appendChild(el("span","", "<strong class='ui'>"+esc(lab)+"</strong>"+(s?"<span class='sub'>"+esc(s)+"</span>":"")));
+    w.appendChild(l);
+  });
+  return w;
+}
+function scale(which, legend){
+  var fs = el("fieldset","scale"); fs.appendChild(el("legend","", legend));
+  T.itch.forEach(function(t,n){
+    var l = el("label","lvl"+(n>=3?" strong":""));
+    var i = document.createElement("input"); i.type="radio"; i.name="itch_"+which; i.value=n;
+    i.checked = S.itch[which]===n;
+    i.addEventListener("change", function(){ S.itch[which]=n; save(); });
+    l.appendChild(i); l.appendChild(el("b","",String(n))); l.appendChild(el("span","",t));
+    fs.appendChild(l);
+  });
+  return fs;
+}
+
+/* ---------- panels ---------- */
+function intro(p){
+  p.appendChild(el("h2","",T.introTitle));
+  p.appendChild(el("p","lede",T.introP1));
+  p.appendChild(el("p","lede",T.introP2));
+  var cards = el("div","cards");
+  T.cards.forEach(function(c){
+    var d = el("div","card");
+    d.appendChild(el("h4","", (c[0]?"<span class='L'>"+c[0]+"</span>":"")+esc(c[1])));
+    d.appendChild(el("p","",esc(c[2]))); cards.appendChild(d);
+  });
+  p.appendChild(cards);
+  p.appendChild(el("h3","",T.howTitle));
+  var ul = el("ul",""); T.how.forEach(function(t){ ul.appendChild(el("li","",esc(t))); });
+  p.appendChild(ul);
+  p.appendChild(el("h3","",T.yourVenture));
+  var g = el("div","twoup");
+  [["vname",T.mVname],["vwho",T.mVwho]].forEach(function(m){
+    var d = el("div","field");
+    var l = el("label","q",m[1]); l.setAttribute("for","m_"+m[0]);
+    var i = document.createElement("input"); i.type="text"; i.id="m_"+m[0]; i.value=S.meta[m[0]]||"";
+    i.addEventListener("input", function(){ S.meta[m[0]]=i.value; save(); });
+    d.appendChild(l); d.appendChild(i); g.appendChild(d);
+  });
+  p.appendChild(g);
+  p.appendChild(el("p","small",T.disclaimer));
+}
+
+function stepPanel(p, id){
+  var st = T.steps[id], idx = ORDER.indexOf(id);
+  var letter = ["","","S","I","E","V","E","",""][idx];
+  p.appendChild(el("p","eyebrow",(letter?letter+" \u00b7 ":"")+T.nav[idx]));
+  p.appendChild(el("h2","",st.title));
+  p.appendChild(el("p","lede",st.lede));
+  var cols = el("div","cols"), left = el("div"), right = el("div");
+  var pr = el("div","principle");
+  pr.appendChild(el("p","eyebrow",T.whyFilter));
+  pr.appendChild(el("p","",st.principle));
+  left.appendChild(pr);
+
+  if(id === "itch"){
+    left.appendChild(el("p","hint",st.scaleHint));
+    var g = el("div","twoup");
+    g.appendChild(scale("self",st.scaleUser));
+    g.appendChild(scale("payer",st.scalePayer));
+    left.appendChild(g);
+  }
+  (FIELDS[id]||[]).forEach(function(k){ left.appendChild(field(k, k==="v4")); });
+
+  if(id === "existing"){
+    left.appendChild(el("h3","",st.blockersH));
+    left.appendChild(el("p","hint",st.blockersHint));
+    left.appendChild(checks(T.blockers));
+  }
+  if(id === "v0"){
+    left.appendChild(el("h3","",st.formsH));
+    left.appendChild(checks(T.forms.map(function(f){ return ["form_"+f[0],f[1],f[2]]; })));
+  }
+  if(id === "evidence"){
+    left.appendChild(el("h3","",st.gatesH));
+    left.appendChild(el("p","hint",st.gatesHint));
+    left.appendChild(checks(T.gates));
+    left.appendChild(el("h3","",st.warnH));
+    left.appendChild(el("p","hint",st.warnHint));
+    left.appendChild(checks(T.warns,true));
+    left.appendChild(el("h3","",st.enoughH));
+    left.appendChild(el("p","hint",st.enough));
+  }
+  if(st.note) left.appendChild(el("p","small",st.note));
+
+  var pa = el("div","passes");
+  pa.appendChild(el("p","eyebrow",T.passesWhen));
+  pa.appendChild(el("p","",st.passes));
+  right.appendChild(pa);
+  cols.appendChild(left); cols.appendChild(right); p.appendChild(cols);
+}
+
+function nextPanel(p){
+  p.appendChild(el("h2","",T.nextTitle));
+  p.appendChild(el("p","lede",T.nextLede));
+  var b = el("div","principle"); b.appendChild(el("p","",T.nextKeep)); p.appendChild(b);
+  var d = el("div"); d.id="pivotReason"; p.appendChild(d);
+  p.appendChild(el("h3","",T.pivotH));
+  p.appendChild(el("p","hint",T.pivotHint));
+  var w = el("div"); w.id="pivotList"; p.appendChild(w);
+  p.appendChild(field("pv_keep"));
+  p.appendChild(field("pv_next"));
+}
+
+/* ---------- rules ---------- */
+function assess(){
+  var r = {};
+  r.itchSelf = S.itch.self; r.itchPayer = S.itch.payer;
+  r.gates = T.gates.map(function(g){ return chk(g[0]); });
+  r.gateCount = r.gates.filter(Boolean).length;
+  r.warnKeys = C.en.warns.filter(function(w){ return chk(w[0]); }).map(function(w){ return w[0]; });
+  r.warns = T.warns.filter(function(w){ return chk(w[0]); }).map(function(w){ return w[1]; });
+  r.blockKeys = C.en.blockers.filter(function(b){ return b[0]!=="b_none" && chk(b[0]); }).map(function(b){ return b[0]; });
+  r.blocks = T.blockers.filter(function(b){ return b[0]!=="b_none" && chk(b[0]); }).map(function(b){ return b[1]; });
+  r.forms = T.forms.filter(function(f){ return chk("form_"+f[0]); });
+
+  r.nWhy = cnt(FIELDS.why); r.nSome = cnt(FIELDS.someone);
+  r.nExist = cnt(FIELDS.existing); r.nV0 = cnt(FIELDS.v0);
+  r.hasStop = !!txt("v3"); r.hasReach = !!txt("s5"); r.hasPayer = !!txt("s3");
+  r.hasAlt = !!txt("e1"); r.hasAltCost = !!txt("e2"); r.hasWhyNot = !!txt("e3");
+  r.hasSwitch = !!txt("e4"); r.hasItchEv = !!txt("i2");
+  function st(ok,part){ return ok?"pass":(part?"part":"no"); }
+  r.status = {
+    why: st(r.nWhy>=5, r.nWhy>=2),
+    someone: st(r.nSome>=4 && r.hasPayer, r.nSome>=2),
+    itch: st(r.itchPayer!==null && r.itchPayer>=3 && r.hasItchEv, r.itchSelf!==null),
+    existing: st(r.hasAlt && r.hasAltCost && r.hasWhyNot && r.hasSwitch, r.hasAlt),
+    v0: st(r.forms.length>0 && r.hasStop && r.nV0>=3, r.nV0>=1),
+    evidence: st(r.gateCount>=4, r.gateCount>=1)
+  };
+  var has = function(k){ return r.blockKeys.indexOf(k)>-1; };
+  var warn = function(k){ return r.warnKeys.indexOf(k)>-1; };
+  var v;
+  if(r.gateCount===5 && r.warnKeys.length===0) v="CONT";
+  else if(r.itchPayer!==null && r.itchPayer<3 && r.itchSelf!==null && r.itchSelf<3) v="PIVOT";
+  else if(r.itchPayer!==null && r.itchPayer<3) v="CUST";
+  else if(has("b_reg") && !r.gates[2]) v="SOL";
+  else if(r.gates[2] && !r.gates[3] && warn("w_free")) v="PAY";
+  else if(r.gateCount>=3) v="TEST";
+  else if(r.status.evidence==="no" && r.status.v0!=="no") v="RUN";
+  else v="EARLY";
+  r.verdict = T.verdicts[v][0]; r.verdictNote = T.verdicts[v][1]; r.vKey = v;
+
+  var a=[], A=T.actions;
+  function add(x){ if(x && a.indexOf(x)===-1) a.push(x); }
+  if(has("b_reg")) add(A.reg);
+  if(r.nWhy<4) add(A.why);
+  if(r.nWhy>=4 && !txt("why4")) add(A.gaps);
+  if(!r.hasPayer) add(A.payer);
+  if(!r.hasReach) add(A.reach);
+  if(r.itchSelf===null || r.itchPayer===null) add(A.score);
+  if(r.itchPayer!==null && r.itchPayer<3) add(A.lowpayer);
+  if(!r.hasItchEv) add(A.itchev);
+  if(!r.hasAlt) add(A.alt);
+  if(r.hasAlt && !r.hasAltCost) add(A.altcost);
+  if(r.hasAlt && !r.hasWhyNot) add(A.whynot);
+  if(has("b_sub")) add(A.sub);
+  if(has("b_lab")) add(A.lab);
+  if(has("b_imp")) add(A.imp);
+  if(has("b_free")) add(A.freealt);
+  if(r.forms.length===0) add(A.form);
+  if(!r.hasStop) add(A.stop);
+  if(r.status.v0!=="no" && !r.gates[2]) add(A.run);
+  if(r.gates[2] && !r.gates[3]) add(A.price);
+  if(r.gates[3] && !r.gates[4]) add(A.repeat);
+  if(warn("w_family")) add(A.family);
+  if(warn("w_present")) add(A.present);
+  if(warn("w_grant")) add(A.grant);
+  if(warn("w_few")) add(A.few);
+  if(r.gateCount===5){ add(A.hundred); add(A.doc); }
+  add(A.again);
+  r.actions = a.slice(0,7);
+
+  var pv=[];
+  if(r.itchPayer!==null && r.itchPayer<3 && r.itchSelf!==null && r.itchSelf>=3) pv.push("p_cust");
+  if(r.itchSelf!==null && r.itchSelf<3) pv.push("p_prob");
+  if(has("b_reg")||has("b_imp")||has("b_lab")) pv.push("p_sol");
+  if(r.gates[2] && !r.gates[3]) pv.push("p_pay");
+  if(has("b_free")) pv.push("p_part");
+  if(pv.length===0 && r.gateCount<3) pv.push("p_cust");
+  r.pivots = pv;
+  return r;
+}
+
+/* ---------- renderers ---------- */
+function renderPivot(){
+  var r = assess();
+  var box = el("div","verdict");
+  box.appendChild(el("h3","",esc(r.verdict)));
+  box.appendChild(el("p","",esc(r.verdictNote)));
+  var host = document.getElementById("pivotReason"); host.innerHTML=""; host.appendChild(box);
+  var list = document.getElementById("pivotList"); list.innerHTML="";
+  T.pivots.forEach(function(p){
+    var likely = r.pivots.indexOf(p[0])>-1;
+    var d = el("div","card"); d.style.marginBottom="12px";
+    if(likely) d.style.borderColor="var(--orange)";
+    d.appendChild(el("h4","",(likely?"<span class='L'>\u2192</span> ":"")+esc(p[1])));
+    d.appendChild(el("p","",esc(p[2]))); list.appendChild(d);
+  });
+}
+
+function summaryHTML(){
+  var r = assess(), m = S.meta, U = T.sum, h = "";
+  h += "<div class='sumhead'><div><h3>"+(esc(m.vname)||U.untitled)+"</h3>";
+  h += "<p class='small'>"+(esc(m.vwho)||"&nbsp;")+"</p></div>";
+  h += "<p class='small'>"+U.stamp+" \u00b7 "+new Date().toLocaleDateString(lang==="fr"?"fr-FR":"en-GB")+"</p></div>";
+  h += "<div class='verdict'><h3>"+esc(r.verdict)+"</h3><p>"+esc(r.verdictNote)+"</p></div>";
+  h += "<h3>"+U.whereH+"</h3><table class='sum'><thead><tr><th>"+U.colFilter+"</th><th>"+U.colStatus+"</th><th>"+U.colRests+"</th></tr></thead><tbody>";
+  var rows = [
+    [U.names[0], r.status.why, sub(U.of6, r.nWhy)],
+    [U.names[1], r.status.someone, sub(U.of5, r.nSome)+(r.hasPayer?U.payerYes:U.payerNo)],
+    [U.names[2], r.status.itch, (r.itchSelf===null?U.notScored:U.user+" "+r.itchSelf)+(r.itchPayer===null?"":", "+U.payer+" "+r.itchPayer)+(r.hasItchEv?U.evYes:U.evNo)],
+    [U.names[3], r.status.existing, sub(U.of4, r.nExist)+(r.blocks.length?sub(U.condNoted, r.blocks.length):"")],
+    [U.names[4], r.status.v0, (r.forms.length?sub(U.formsChosen, r.forms.length):U.noForm)+(r.hasStop?U.stopYes:U.stopNo)],
+    [U.names[5], r.status.evidence, sub(U.gatesOf, r.gateCount)+(r.warns.length?sub(U.cautionFlag, r.warns.length):"")]
+  ];
+  rows.forEach(function(x){
+    var cls = x[1]==="pass"?"ok":(x[1]==="part"?"na":"no");
+    var lab = x[1]==="pass"?U.holds:(x[1]==="part"?U.partly:U.notyet);
+    h += "<tr><td><strong class='ui'>"+esc(x[0])+"</strong></td><td><span class='pill "+cls+"'>"+lab+"</span></td><td>"+esc(x[2])+"</td></tr>";
+  });
+  h += "</tbody></table>";
+  h += "<h3>"+U.gatesH+"</h3><p class='small gateline'>"+T.gates.map(function(g,i){ return (r.gates[i]?"\u25A0 ":"\u25A1 ")+esc(g[1]); }).join(" &nbsp; ")+"</p>";
+  if(r.warns.length){ h += "<h3>"+U.cautionsH+"</h3><ul class='small'>"; r.warns.forEach(function(w){ h += "<li>"+esc(w)+"</li>"; }); h += "</ul>"; }
+  if(r.blocks.length){ h += "<h3>"+U.condH+"</h3><ul class='small'>"; r.blocks.forEach(function(b){ h += "<li>"+esc(b)+"</li>"; }); h += "</ul>"; }
+  h += "<h3>"+U.actionsH+"</h3><ol class='actions'>";
+  r.actions.forEach(function(t){ h += "<li>"+esc(t)+"</li>"; });
+  h += "</ol>";
+  if(r.pivots.length){
+    h += "<h3>"+U.pivotsH+"</h3><ul class='small'>";
+    r.pivots.forEach(function(id){
+      var p = T.pivots.filter(function(x){ return x[0]===id; })[0];
+      if(p) h += "<li><strong class='ui'>"+esc(p[1])+"</strong> \u2014 "+esc(p[2])+"</li>";
+    });
+    h += "</ul>";
+  }
+  if(txt("pv_keep")||txt("pv_next")){
+    h += "<h3>"+U.pivotNotesH+"</h3><dl class='answers'>";
+    if(txt("pv_keep")) h += "<dt>"+U.keepL+"</dt><dd>"+esc(txt("pv_keep"))+"</dd>";
+    if(txt("pv_next")) h += "<dt>"+U.nextL+"</dt><dd>"+esc(txt("pv_next"))+"</dd>";
+    h += "</dl>";
+  }
+  var ans=[];
+  ORDER.forEach(function(id){ (FIELDS[id]||[]).forEach(function(k){ if(txt(k)) ans.push([T.fields[k][0], txt(k)]); }); });
+  if(ans.length){
+    h += "<h3 class='noprint'>"+U.answersH+"</h3><dl class='answers noprint'>";
+    ans.forEach(function(a){ h += "<dt>"+esc(a[0])+"</dt><dd>"+esc(a[1])+"</dd>"; });
+    h += "</dl>";
+  }
+  h += "<p class='foot'>"+esc(U.foot)+"</p>";
+  return h;
+}
+
+function renderSummary(){
+  var sheet = document.querySelector("#p-summary .sheet");
+  sheet.innerHTML = summaryHTML();
+  var dl = document.getElementById("dlBtn");
+  if(dl && window.__dlSave){
+    dl.hidden = false;
+    dl.onclick = function(){
+      var nm = (S.meta.vname||"sieve").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||"sieve";
+      var doc = "<!DOCTYPE html><html lang='"+lang+"'><meta charset='utf-8'><title>"+esc(T.sum.stamp)+"</title>"
+        +"<style>body{font-family:Georgia,serif;max-width:820px;margin:40px auto;padding:0 20px;color:#222;line-height:1.55}"
+        +"h3{font-family:system-ui,sans-serif}table{width:100%;border-collapse:collapse;font-size:14px}"
+        +"td,th{border-bottom:1px solid #ddd;padding:6px;text-align:left}.pill{font-size:11px;border:1px solid #ccc;padding:1px 7px;border-radius:9px}"
+        +".verdict{background:#f4f1ec;padding:14px;border-radius:8px}.small{font-size:13px;color:#666}"
+        +".sumhead{display:flex;justify-content:space-between}ol.actions li{margin-bottom:6px}</style>"+summaryHTML();
+      window.__dlSave(nm+"-sieve.html", doc);
+    };
+  }
+}
+
+/* ---------- build ---------- */
+function build(){
+  document.documentElement.lang = lang;
+  document.title = "SIEVE \u2014 " + T.brand;
+  document.getElementById("tagline").textContent = T.brand;
+  document.getElementById("skipLink").textContent = T.skip;
+  document.getElementById("langBtn").textContent = T.other;
+  document.getElementById("langBtn").setAttribute("lang", T.otherCode);
+  document.getElementById("resetBtn").textContent = T.clear;
+  document.getElementById("stepNavWrap").setAttribute("aria-label", T.progress);
+  var dark = document.documentElement.getAttribute("data-theme")==="dark";
+  document.getElementById("themeBtn").textContent = dark ? T.theme[1] : T.theme[0];
+
+  var panels = document.getElementById("panels"), nav = document.getElementById("stepNav");
+  panels.innerHTML=""; nav.innerHTML="";
+
+  ORDER.forEach(function(id,i){
+    var p = el("section","panel"); p.id="p-"+id;
+    if(id==="start") intro(p);
+    else if(id==="next") nextPanel(p);
+    else if(id==="summary"){ p.appendChild(el("h2","",T.sum.title)); p.appendChild(el("div","sheet","")); }
+    else stepPanel(p,id);
+
+    var row = el("div","navrow noprint");
+    if(i>0){ var b=el("button","btn sec",T.back); b.type="button"; b.onclick=function(){ go(i-1); }; row.appendChild(b); }
+    if(i<ORDER.length-1){ var n=el("button","btn primary", i===0?T.startBtn:T.next); n.type="button"; n.onclick=function(){ go(i+1); }; row.appendChild(n); }
+    if(id==="summary"){
+      var pr=el("button","btn primary",T.print); pr.type="button"; pr.onclick=function(){ window.print(); }; row.appendChild(pr);
+      var dl=el("button","btn sec",T.download); dl.type="button"; dl.id="dlBtn"; dl.hidden=true; row.appendChild(dl);
+    }
+    var sv=el("span","saved"); sv.id="savedNote"; row.appendChild(sv);
+    p.appendChild(row);
+    panels.appendChild(p);
+
+    var li=document.createElement("li");
+    var nb=el("button","","<span class='dot'>"+(i+1)+"</span><span>"+esc(T.nav[i])+"</span>");
+    nb.type="button"; nb.onclick=function(){ go(i); };
+    li.appendChild(nb); nav.appendChild(li);
+  });
+  go(cur);
+}
+
+function go(i){
+  cur = Math.max(0, Math.min(ORDER.length-1, i));
+  var panels = document.getElementById("panels"), nav = document.getElementById("stepNav");
+  Array.prototype.forEach.call(panels.children,function(p,n){ p.classList.toggle("on", n===cur); });
+  Array.prototype.forEach.call(nav.children,function(li,n){
+    var b=li.firstChild;
+    if(n===cur) b.setAttribute("aria-current","step"); else b.removeAttribute("aria-current");
+    b.classList.toggle("done", n<cur);
+  });
+  document.getElementById("barFill").style.width = (cur/(ORDER.length-1)*100)+"%";
+  document.getElementById("live").textContent = sub(T.stepOf, cur+1, ORDER.length, T.nav[cur]);
+  if(ORDER[cur]==="next") renderPivot();
+  if(ORDER[cur]==="summary") renderSummary();
+  window.scrollTo(0,0);
+  try{ history.replaceState(null,"","#"+ORDER[cur]); }catch(e){}
+}
+
+/* ---------- chrome ---------- */
+document.getElementById("themeBtn").addEventListener("click",function(){
+  var dark = document.documentElement.getAttribute("data-theme")==="dark";
+  var nx = dark?"light":"dark";
+  document.documentElement.setAttribute("data-theme",nx);
+  this.textContent = nx==="dark"?T.theme[1]:T.theme[0];
+  try{ localStorage.setItem(KEY+".theme",nx); }catch(e){}
+});
+document.getElementById("langBtn").addEventListener("click",function(){
+  lang = (lang==="en")?"fr":"en"; T = C[lang];
+  try{ localStorage.setItem(KEY+".lang",lang); }catch(e){}
+  build();
+});
+document.getElementById("resetBtn").addEventListener("click",function(){
+  if(!confirm(T.confirmClear)) return;
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  S={meta:{},f:{},c:{},itch:{self:null,payer:null}};
+  build();
+});
+
+load();
+try{
+  var th=localStorage.getItem(KEY+".theme");
+  if(th) document.documentElement.setAttribute("data-theme",th);
+}catch(e){}
+var hash=(location.hash||"").replace("#","");
+ORDER.forEach(function(s,i){ if(s===hash) cur=i; });
+build();
+
+if(window.claude && typeof window.claude.use==="function"){
+  window.claude.use("downloads").then(function(d){
+    if(!d) return;
+    window.__dlSave=function(f,data){ try{ d.save({filename:f,data:data}); }catch(e){} };
+    if(ORDER[cur]==="summary") renderSummary();
+  }).catch(function(){});
+}
+})();
+
+</script>
+</body>
+</html>
